@@ -19,7 +19,7 @@ classdef ArmKinematics
             obj.l1 = l1;
             obj.l2 = l2;
             obj.minRadius = l1/4; % TODO seems reasonable. test
-            obj.minDepth = -1; % TODO find out how deep should we go
+            obj.minDepth = -obj.l1; % TODO find out how deep should we go
         end
         
         % forward kinematic equations are
@@ -96,11 +96,8 @@ classdef ArmKinematics
                 res = 1;
             end 
         end
-        function [theta1, theta2, tilt, res] = findThetas(obj, x, y)
-            % FIXME scoop length and orientation should be accomodated
-            % or coordinate of scoop root are fed in?
+        function [theta1, theta2, res] = findThetas(obj, x, y)
             res = 0;
-            tilt = 0;
             theta1 = pi/2;
             theta2 = 0;
             if ~obj.inWorkspace(x,y)
@@ -114,8 +111,7 @@ classdef ArmKinematics
             beta = acos((obj.l1^2 + r^2 - obj.l2^2)/(2*r*obj.l1));
             theta1 = beta + alpha;
             theta2 = atan2(obj.l1*sin(theta1) - y, x - obj.l1*cos(theta1));
-            tilt = theta2; % TODO now always parallel to the ground
-            if wrongTheta1(obj, theta1) || wrongTheta2(obj, theta2) || wrongTilt(obj, tilt)
+            if wrongTheta1(obj, theta1) || wrongTheta2(obj, theta2)
                 res = -1;
             end
         end
