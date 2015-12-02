@@ -38,7 +38,7 @@ if (newStatus == 1)
        if(~strcmp(currentDisplay,'Reached Mt Simmons'))
             currentDisplay = 'Reached Mt Simmons';
             set(f_currentDisplay, 'String', currentDisplay);
-           % GPScorrection();
+            GPScorrection();
         end
         achievePos = 1; %We arrived at the snow collection area
         collectSnow = 1; %Start Collecting Snow procedure

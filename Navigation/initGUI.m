@@ -9,7 +9,7 @@ global f f_manual f_automatic f_title f_robotPosTable f_BoardMap f_Video...
     currentDisplay xPos yPos Phi serialConnection serialData xPosInit yPosInit PhiInit...
     GPS_X GPS_Y GPS_Phi s1 achievePosMt collectSnow dumpSnow dumpDebris achievePosTree...
     dumpTree removeTree achievePosRoof clearRoofLeft f_clearRoofRight f_clearRoofLeft...
-    clearRoofRight
+    clearRoofRight count
 
 delete(instrfind);
 %Try starting a serial connection with the Arduino
@@ -151,15 +151,15 @@ set([f,f_manual,f_automatic,f_title,f_robotPosTable,f_BoardMap,f_Video,...
     function f_GPScorrection_Callback(source,eventdata)
         global command_X command_Y command_Phi
         disp('GPScorrection');
-        if(~strcmp(currentSubTask,'Correting GPS'))
-            currentSubTask = 'Correting GPS';
-            set(f_currentSubTask, 'String', currentSubTask);
-        end
+        %         if(~strcmp(currentSubTask,'Correting GPS'))
+        %             currentSubTask = 'Correting GPS';
+        %             set(f_currentSubTask, 'String', currentSubTask);
+        %         end
         
-%         [GPS_X, GPS_Y, GPS_Phi, timestamp] = getVals(s1);
-GPS_X = 0.50;
-GPS_Y = 0.15;
-GPS_Phi = 50;
+        %         [GPS_X, GPS_Y, GPS_Phi, timestamp] = getVals(s1);
+        GPS_X = 0.50;
+        GPS_Y = 0.15;
+        GPS_Phi = 50;
         
         fwrite(serialConnection,num2str(command_X(command_Index)));
         fwrite(serialConnection,',');
@@ -363,7 +363,22 @@ GPS_Phi = 50;
                 fwrite(serialConnection,',');
                 fwrite(serialConnection,num2str(GPS_Phi));
                 fwrite(serialConnection,'\n');
+                
+            case 'o'
+                disp('Open Scoop');
+                fwrite(serialConnection,'O');
+                fwrite(serialConnection,'\n');
+                pause(1);
+                count = 1;
+                
+            case 'c'
+                disp('Close Scoop');
+                fwrite(serialConnection,'C');
+                fwrite(serialConnection,'\n');
+                pause(1);
+                count = 1;
         end
+        
         
     end
 end

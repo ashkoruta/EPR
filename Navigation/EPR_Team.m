@@ -17,12 +17,13 @@ global f f_manual f_automatic f_title f_robotPosTable f_BoardMap f_Video...
     readyToReleaseTree dumpTree readyToClear serialConnection...
     serialData xPosInit yPosInit PhiInit counterserial clearRoofLeft...
     readyToClearRoof clearRoofRight roofCleaned s1 achievePosRoof...
-    f_clearRoofRight f_clearRoofLeft  
+    f_clearRoofRight f_clearRoofLeft   ScoopCommand count
 
 
 %Create the GUI and initialise the variables
 initVar();
 initGUI();
+count = 1;
 
 % %Create the connexion between GPS signal and the Robot
 % serverIP ='192.168.1.212'; %Use for testing with the 2.12 servers
@@ -66,6 +67,7 @@ while (1)
             newyPos = str2double(splitData(2));
             newAngle = (180/pi)*str2double(splitData(3));
             newStatus = str2double(splitData(4));
+            %ScoopCommand = (splitData(5));
             %Drop the first elements of the data vectors
             xPos(1) = [];
             yPos(1) = [];
@@ -78,6 +80,10 @@ while (1)
             Phi = [Phi newAngle];
             
             counterserial = 0;
+            if(count == 1)
+            disp(ScoopCommand);
+            count = 0;
+            end
         end
         
         counterserial = counterserial +1;

@@ -226,6 +226,7 @@ class SerialCommunication {
     float GPS_Phi;
     boolean finished;
     boolean GPScorrection;
+    int ServoCom; // 0 - not a servo command, 1 - open 2 - close //TODO
     /*Function Name: initialize();
     Effect: Initialize all public member variables of the class to 0 and prevSerialTime to micro()
     Modifies: All member variables
@@ -344,7 +345,7 @@ class PathPlanner {
     Output: None
     Usage; Call this function in each timed loop to update the desired wheel velocity
     */
-    void turnToGo(const RobotPosition & robotPos, SerialCommunication & reportData);
+    void turnToGo(RobotPosition & robotPos, SerialCommunication & reportData);
      /*Function Name: void turnAndGo(const RobotPosition & robotPos);
     Effect: modify the member variable desiredMVL and desiredMVR based on the next goal position (X,Y) to turn and go at the same time
     Modifies: 1. int currentTask;

@@ -95,13 +95,12 @@ void RobotPosition::update(float dThetaL, float dThetaR) {
 }
 
 void RobotPosition::GPSupdate(SerialCommunication & reportData, PathPlanner & pathPlanner) {
-  if(reportData.GPScorrection)
+  if(reportData.GPScorrection==1)
   {
   X = reportData.GPS_Xpos;
   Y = reportData.GPS_Ypos;
   Phi = reportData.GPS_Phi;
   
-  pathDistance -= sqrt((X-prevX)*(X-prevX)+(Y-prevY)*(Y-prevY));
   prevPhi = Phi;
   AvgPhi = Phi;
   prevX = X;
@@ -167,7 +166,7 @@ void PIController::doPIControl(String side, float desV, float currV) {
 //SerialCommunication Class function implementation
 void SerialCommunication::initialize() {
   prevSerialTime = micros();
-  return;
+  ServoCom = 0;
 }
 
 void SerialCommunication::sendSerialData(const RobotPosition & robotPos) {
@@ -178,7 +177,9 @@ void SerialCommunication::sendSerialData(const RobotPosition & robotPos) {
     Serial.print(",");
     Serial.print(robotPos.Phi); //Phi
     Serial.print(",");
-    Serial.println(finished ? 1 : 0);
+    Serial.print(finished ? 1 : 0);
+    Serial.print(",");
+    Serial.println(ServoCom);
     prevSerialTime = micros();
   }
   return;
@@ -192,10 +193,18 @@ void SerialCommunication::receiveSerialData() {
       while (indexPointer != -1 ) {
         indexPointer = commandString.indexOf(',');
         tempString = commandString.substring(0, indexPointer);
+        if (tempString[0] == 'C')
+          ServoCom = 1;
+        else if (tempString[0] == 'O')
+          ServoCom = 2;
+        else
+          ServoCom = 0; // not a servo command
         commandString = commandString.substring(indexPointer+1);
         command[i] = tempString.toFloat();
         ++i;
       }
+
+      if(ServoCom==0){
       commandX = command[0];
       commandY = command[1];
       commandPhi = command[2]*(PI/180);
@@ -206,6 +215,7 @@ void SerialCommunication::receiveSerialData() {
       if(GPS_correction == 1)
      {GPScorrection = true;}
       updateStatus(false);
+    }
     }
     return;
   }
@@ -260,15 +270,58 @@ void PathPlanner::OrientationController(const RobotPosition & robotPos, SerialCo
   return;
 }
 
-void PathPlanner::turnToGo(const RobotPosition & robotPos, SerialCommunication & reportData) {
+void PathPlanner::turnToGo(RobotPosition & robotPos, SerialCommunication & reportData) {
   //take next point (X,Y) positions given by MatLab, calculate phi to turn towards, then go straight 
   phiGoal = atan2((reportData.commandY - ylast), (reportData.commandX - xlast));
   pathGoal = sqrt((reportData.commandX - xlast) * (reportData.commandX - xlast) + (reportData.commandY - ylast) * (reportData.commandY - ylast)) + pathlast;
+//  float eps = .001;
+//  float delY = reportData.commandY - robotPos.Y;
+//  float delX = reportData.commandX - robotPos.X;
+  
   // constrain the error in phi to the [-pi, pi)
-  float lastPhiError = fmod(phiGoal - philast + PI, 2*PI) - PI;
-  float currentPhiError = fmod(phiGoal - robotPos.Phi + PI, 2*PI) - PI;
-  float lastCommandPhiError = fmod(reportData.commandPhi - philast + PI, 2*PI) -PI;
-  float currentCommandPhiError = fmod(reportData.commandPhi - robotPos.Phi + PI, 2*PI) - PI;
+    float lastPhiError = phiGoal-philast;
+  while ((lastPhiError)< -PI || (lastPhiError)>PI ){
+    if((lastPhiError)< -PI){
+      lastPhiError += 2*PI;
+    } else {
+        if ((lastPhiError)>PI){
+          lastPhiError -= 2*PI;
+        }
+      }
+  }
+  
+  float currentPhiError = phiGoal - robotPos.Phi;
+  while ((currentPhiError)< -PI || (currentPhiError)>PI ){
+    if((currentPhiError)< -PI){
+      currentPhiError += 2*PI;
+    } else {
+        if ((currentPhiError)>PI){
+         currentPhiError -= 2*PI;
+        }
+      }
+  }
+ 
+  float lastCommandPhiError = reportData.commandPhi - philast;
+ while ((lastCommandPhiError)< -PI || (lastCommandPhiError)>PI ){
+    if((lastCommandPhiError)< -PI){
+     lastCommandPhiError += 2*PI;
+    } else {
+        if ((lastCommandPhiError)>PI){
+         lastCommandPhiError -= 2*PI;
+        }
+      }
+  }
+  
+  float currentCommandPhiError = reportData.commandPhi - robotPos.Phi;
+ while ((currentCommandPhiError)< -PI || (currentCommandPhiError)>PI ){
+    if((currentCommandPhiError)< -PI){
+     currentCommandPhiError += 2*PI;
+    } else {
+        if ((currentCommandPhiError)>PI){
+         currentCommandPhiError -= 2*PI;
+        }
+      }
+  }
   
   if (currentTask == 0) { // waiting to receive command x,y
     desiredMVR = 0;
@@ -311,8 +364,8 @@ void PathPlanner::turnToGo(const RobotPosition & robotPos, SerialCommunication &
     }
   }
   
-  if (currentTask == 2) { //now go straight to next point
-    if (robotPos.pathDistance < pathGoal ) { //if we aren't there yet, keep going
+    if (currentTask == 2) { //now go straight to next point
+      if (robotPos.pathDistance < pathGoal ) { //if we aren't there yet, keep going
       forwardVel = .6;
       computeDesiredV();
       OrientationController(robotPos, reportData);
@@ -328,9 +381,8 @@ void PathPlanner::turnToGo(const RobotPosition & robotPos, SerialCommunication &
       reportData.updateStatus(true);
     }
   }
-  
   if(currentTask == 3){
-    if (reportData.commandPhi>2*PI || abs(lastCommandPhiError)<(5*PI/180) ){
+    if (reportData.commandPhi>2*PI){
         desiredMVR = 0;
         desiredMVL = 0;
         currentTask = 0;
