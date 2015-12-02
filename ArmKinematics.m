@@ -86,7 +86,16 @@ classdef ArmKinematics
                 res = 1;
             end 
         end
-        % TODO tilt angle check
+        function res = wrongTilt(obj, th)
+            if th >= -pi()/2 && th <= pi()/2 % tilt +-pi/2 from zero
+                res = 0;
+            else
+                % something is definitely wrong
+                display('E-Kin: check your kinematics');
+                disp(th)
+                res = 1;
+            end 
+        end
         function [theta1, theta2, tilt, res] = findThetas(obj, x, y)
             % FIXME scoop length should be accomodated
             % or coordinate of scoop root are fed in?
@@ -106,7 +115,8 @@ classdef ArmKinematics
             beta = acos((obj.l1^2 + r^2 - obj.l2^2)/(2*r*obj.l1));
             theta1 = beta + alpha;
             theta2 = atan2(obj.l1*sin(theta1) - y, x - obj.l1*cos(theta1));
-            if wrongTheta1(obj, theta1) || wrongTheta2(obj, theta2)
+            tilt = theta2; % TODO now always parallel to the ground
+            if wrongTheta1(obj, theta1) || wrongTheta2(obj, theta2) || wrongTilt(obj, tilt)
                 res = -1;
             end
         end

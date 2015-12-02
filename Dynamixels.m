@@ -117,7 +117,7 @@ classdef Dynamixels
                     disp(Id); disp(angle);
                     return;
                 end
-            else % tilt motor % TODO Suppose facing up for now
+            else % tilt motor
                 % VERY IMPORTANT - CAN BREAK MOTOR IF VIOLATE THIS
                 if angle <= -(pi - 54*pi/180) || angle >= 135*pi/180
                     res = 0;
@@ -183,8 +183,6 @@ classdef Dynamixels
         function res = setArmConfig(ac)
             [t1, t2, tilt, w1, w2] = ac.getConfig();
             % set the speeds
-            %display(w1);
-            %display(w2);
             res = Dynamixels.setGoalSpeed(Dynamixels.BottomRightMotorId, w1);
             if res < 0 || ~Dynamixels.wasSuccess()
                 display('E-Dyn: bottom right motor speed failure');
@@ -211,18 +209,18 @@ classdef Dynamixels
                 return;
             end
         
-%             Dynamixels.setGoalAngle(Dynamixels.TiltMotorId, tilt);
-%             if res < 0 || ~Dynamixels.wasSuccess()
-%                 display('E-Dyn: tilt motor failure');
-%                 res = -1;
-%                 return;
-%             end
+             Dynamixels.setGoalAngle(Dynamixels.TiltMotorId, tilt);
+             if res < 0 || ~Dynamixels.wasSuccess()
+                 display('E-Dyn: tilt motor failure');
+                 res = -1;
+                 return;
+             end
             res = 0;
         end
         function ac = getArmConfig()
             th1 = Dynamixels.getCurrentAngle(Dynamixels.BottomRightMotorId);
             th2 = Dynamixels.getCurrentAngle(Dynamixels.BottomLeftMotorId);
-            phi = 0; % Dynamixels.getCurrentAngle(Dynamixels.TiltMotorId);
+            phi = Dynamixels.getCurrentAngle(Dynamixels.TiltMotorId);
             ac = ArmConfiguration(th1, th2, phi);
         end
         function disconnect()

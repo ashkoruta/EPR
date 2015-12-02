@@ -13,8 +13,13 @@ function res = moveXY(ac, ak, xd, yd, vx, vy)
         return;
     end
     res = ak.getJointVelocities(curTh1, curTh2, vx, vy);
-    w1 = abs(res(1));
-    w2 = abs(res(2));
+    % No need to control speed. It doesn't work anyway
+    % Use constant angular speed instead. It's rather smooth and pretty
+    % straight (pieces of circles are pretty straight for our link lengths 
+    % relative to distance travelled in XY plane
+    w1 = 0.08; %abs(res(1));
+    w2 = 0.08; %abs(res(2));
+    % TODO tilt angle and speed
     acNew = ArmConfiguration(th1, th2, 0);
     acNew.w1 = w1;
     acNew.w2 = w2;

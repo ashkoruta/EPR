@@ -17,13 +17,15 @@ classdef ArmConfiguration
             e.phi = tilt;
             e.w1 = 0;
             e.w2 = 0;
+            e.wtilt = 0;
         end
-        function [t1, t2, tilt, w1, w2] = getConfig(obj)
+        function [t1, t2, tilt, w1, w2, wtilt] = getConfig(obj)
             t1 = obj.theta1;
             t2 = obj.theta2;
             tilt = obj.phi;
             w1 = obj.w1;
             w2 = obj.w2;
+            wtilt = obj.wtilt;
         end
     end
     
