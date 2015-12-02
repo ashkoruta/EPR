@@ -20,7 +20,7 @@ if(newCommand == 1)
     %     command_Phi = [0];
     command_X = [1.2];
     command_Y = [0.15];
-    command_Phi = [90];
+    command_Phi = [0];
     
     command_Index = 0; %Start looking from the beginning of the Commands
     newCommand = 0; %Command set won't go back in that loop
@@ -38,7 +38,8 @@ if (newStatus == 1)
        if(~strcmp(currentDisplay,'Reached Mt Simmons'))
             currentDisplay = 'Reached Mt Simmons';
             set(f_currentDisplay, 'String', currentDisplay);
-            GPScorrection();
+            pause(0.05);
+            %GPScorrection();
         end
         achievePos = 1; %We arrived at the snow collection area
         collectSnow = 1; %Start Collecting Snow procedure

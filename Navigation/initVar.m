@@ -21,7 +21,7 @@ Phi = linspace(0, 0, windowWidth*3); %Orientation Phi of the Robot from axis x t
 
 %Position the Robot at the starting point
 xPosInit = 3.246;
-yPosInit = 2.283;
+yPosInit = 2.083;
 PhiInit = 0;
 xPos(end) = 0;
 yPos(end) = 0;

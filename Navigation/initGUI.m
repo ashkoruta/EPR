@@ -156,10 +156,15 @@ set([f,f_manual,f_automatic,f_title,f_robotPosTable,f_BoardMap,f_Video,...
         %             set(f_currentSubTask, 'String', currentSubTask);
         %         end
         
-        %         [GPS_X, GPS_Y, GPS_Phi, timestamp] = getVals(s1);
-        GPS_X = 0.50;
-        GPS_Y = 0.15;
-        GPS_Phi = 50;
+        [GPS_X, GPS_Y, GPS_Phi, timestamp] = getVals(s1);
+        A=GPS_X;
+        
+        GPS_X = GPS_Y + 1.15;
+        GPS_Y = -A + 1.73;
+        GPS_Phi = GPS_Phi*180/pi -90;
+        %         GPS_X = 0.50;
+        %         GPS_Y = 0.15;
+        %         GPS_Phi = 50;
         
         fwrite(serialConnection,num2str(command_X(command_Index)));
         fwrite(serialConnection,',');
@@ -175,8 +180,8 @@ set([f,f_manual,f_automatic,f_title,f_robotPosTable,f_BoardMap,f_Video,...
         fwrite(serialConnection,',');
         fwrite(serialConnection,num2str(GPS_Phi));
         fwrite(serialConnection,'\n');
-        
         disp('GPS correction sent');
+        pause(0.1);
     end
 
     function f_dismantle_Callback(source,eventdata)
