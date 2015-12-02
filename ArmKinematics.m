@@ -97,10 +97,9 @@ classdef ArmKinematics
             end 
         end
         function [theta1, theta2, tilt, res] = findThetas(obj, x, y)
-            % FIXME scoop length should be accomodated
+            % FIXME scoop length and orientation should be accomodated
             % or coordinate of scoop root are fed in?
             res = 0;
-            % TODO for now don't bother with scoop orientation
             tilt = 0;
             theta1 = pi/2;
             theta2 = 0;

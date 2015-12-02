@@ -24,14 +24,11 @@ classdef Dynamixels
         COMM_RXWAITING     = 5;
         COMM_RXTIMEOUT     = 6;
         COMM_RXCORRUPT     = 7;
-        % and our port constants
-        DongleCom = 7; %
-        DongleBaud = 4; % should be like that
-        
+                        
         % robot setup is as follows
         % top view:
         %      | - arm here
-        %      tilt motor (id#??) FIXME
+        %      tilt motor (id#4)
         % bottom left(id#3) - bottom right (id#1)
         % side view:
         % "back of right bottom motor" ---- tilt --- scoop
@@ -68,14 +65,20 @@ classdef Dynamixels
                 res = 0;
             end
         end
+        function enableTorques()
+            P_TORQUE_ENABLE = 24;
+            calllib('dynamixel','dxl_write_word', Dynamixels.TiltMotorId, P_TORQUE_ENABLE, 1);
+            calllib('dynamixel','dxl_write_word', Dynamixels.BottomLeftMotorId, P_TORQUE_ENABLE, 1);
+            calllib('dynamixel','dxl_write_word', Dynamixels.BottomRightMotorId, P_TORQUE_ENABLE, 1);
+        end
         % method to connect to the dongle and identify its servos
         % returns a list of the IDs of all the servos
-        function res = connect(COM)
+        function res = connect(COM, Baud)
             loadlibrary('dynamixel','dynamixel.h')
             display('Library loaded');
             % 1 is success, 0 is failure in lib...
             % return negative values for any error goddamnit!
-            res = -1 + calllib('dynamixel','dxl_initialize', COM, Dynamixels.DongleBaud);
+            res = -1 + calllib('dynamixel','dxl_initialize', COM, Baud);
             display('Dxl initialized. '); display(res);
         end
         function angle = angleFromPosition(Id, pos)
@@ -181,8 +184,22 @@ classdef Dynamixels
             res = 0;
         end
         function res = setArmConfig(ac)
-            [t1, t2, tilt, w1, w2] = ac.getConfig();
-            % set the speeds
+            [t1, t2, tilt, w1, w2, wtilt] = ac.getConfig();
+            % adjust the tilt first
+            res = 0;
+            Dynamixels.setGoalSpeed(Dynamixels.TiltMotorId, wtilt);
+            if res < 0 || ~Dynamixels.wasSuccess()
+                display('E-Dyn: tilt motor failure');
+                res = -1;
+                return;
+            end
+            Dynamixels.setGoalAngle(Dynamixels.TiltMotorId, tilt);
+            if res < 0 || ~Dynamixels.wasSuccess()
+                display('E-Dyn: tilt motor failure');
+                res = -1;
+                return;
+            end
+            % set the speeds for motors
             res = Dynamixels.setGoalSpeed(Dynamixels.BottomRightMotorId, w1);
             if res < 0 || ~Dynamixels.wasSuccess()
                 display('E-Dyn: bottom right motor speed failure');
@@ -208,14 +225,6 @@ classdef Dynamixels
                 res = -1;
                 return;
             end
-        
-             Dynamixels.setGoalAngle(Dynamixels.TiltMotorId, tilt);
-             if res < 0 || ~Dynamixels.wasSuccess()
-                 display('E-Dyn: tilt motor failure');
-                 res = -1;
-                 return;
-             end
-            res = 0;
         end
         function ac = getArmConfig()
             th1 = Dynamixels.getCurrentAngle(Dynamixels.BottomRightMotorId);
