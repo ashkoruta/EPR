@@ -14,9 +14,9 @@ end
 if(newCommand == 1)
     %Call a function that outputs the commands to Go to
     %the Tree Area through a way point
-    command_X = [0.90,0.35,0.08,0.08];
-    command_Y = [0.30,0.50,0.70,1.2];
-    command_Phi = [180,135,135,90];
+    command_X = [0.25,-0.02,-0.02];
+    command_Y = [0.50,0.70,1.2];
+    command_Phi = [400,400,90];
     
     command_Index = 0; %Start looking from the beginning of the Commands
     newCommand = 0; %Command set won't go back in that loop
@@ -31,10 +31,11 @@ if (newStatus == 1)
         command_Index = command_Index + 1;
         command_update = 1;
     else
-        %GPScorrection();
+       
         if(~strcmp(currentDisplay,'Reached Tree Area'))
             currentDisplay = 'Reached Tree Area';
             set(f_currentDisplay, 'String',currentDisplay);
+           % GPScorrection();
         end
         achievePosTree = 1; %We arrived at the tree area
         removeTree = 1; %Start Tree removal procedure

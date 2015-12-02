@@ -18,7 +18,7 @@ if(newCommand == 1)
     %     command_X = [1.3];
     %     command_Y = [0.15];
     %     command_Phi = [0];
-    command_X = [1.3];
+    command_X = [1.2];
     command_Y = [0.15];
     command_Phi = [90];
     
@@ -35,10 +35,10 @@ if (newStatus == 1)
         command_Index = command_Index + 1;
         command_update = 1;
     else
-       %GPScorrection();
        if(~strcmp(currentDisplay,'Reached Mt Simmons'))
             currentDisplay = 'Reached Mt Simmons';
             set(f_currentDisplay, 'String', currentDisplay);
+           % GPScorrection();
         end
         achievePos = 1; %We arrived at the snow collection area
         collectSnow = 1; %Start Collecting Snow procedure

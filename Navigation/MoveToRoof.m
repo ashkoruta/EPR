@@ -15,9 +15,9 @@ end
 if(newCommand == 1)
     %Call a function that outputs the commands to Go to
     %Roof Area through a way point
-    command_X = [0.08,0.35,0.65,0.85,1.25];
+    command_X = [-0.02,0.25,0.55,0.75,1.15];
     command_Y = [1.7,1.8,1.7,1.55,1.55];
-    command_Phi = [90,30,-30,0,0];
+    command_Phi = [400,400,400,400,400];
     
     command_Index = 0; %Start looking from the beginning of the Commands
     newCommand = 0; %Command set won't go back in that loop
@@ -32,13 +32,14 @@ if (newStatus == 1)
         command_Index = command_Index + 1;
         command_update = 1;
     else
-        %GPScorrection();
+        
         if(~strcmp(currentDisplay,'Reached Roof'))
             currentDisplay = 'Reached Roof';
             set(f_currentDisplay, 'String', currentDisplay);
+            %GPScorrection();
         end
         achievePosRoof = 1; %We arrived at the roof cleaning area
-        clearRoofLeft = 1; %Start cleaning procedure
+        clearRoofLeft = 0; %Start cleaning procedure
     end
 end
 

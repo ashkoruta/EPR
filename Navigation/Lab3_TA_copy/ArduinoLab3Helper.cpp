@@ -330,6 +330,14 @@ void PathPlanner::turnToGo(const RobotPosition & robotPos, SerialCommunication &
   }
   
   if(currentTask == 3){
+    if (reportData.commandPhi>2*PI || abs(lastCommandPhiError)<(5*PI/180) ){
+        desiredMVR = 0;
+        desiredMVL = 0;
+        currentTask = 0;
+        float pathAfterTurn = robotPos.pathDistance;
+        pathGoal = pathAfterTurn+sqrt((reportData.commandX - robotPos.X) * (reportData.commandX - robotPos.X) + (reportData.commandY - robotPos.Y) * (reportData.commandY - robotPos.Y));
+    }
+    else {
     if (lastCommandPhiError > 0 || (lastCommandPhiError <0 && 2*PI-abs(lastCommandPhiError)<PI)){ //turn counter clock wise
       if (currentCommandPhiError >= 0){
         desiredMVR = 0.4;
@@ -361,6 +369,7 @@ void PathPlanner::turnToGo(const RobotPosition & robotPos, SerialCommunication &
       pathGoal = pathAfterTurn+sqrt((reportData.commandX - robotPos.X) * (reportData.commandX - robotPos.X) + (reportData.commandY - robotPos.Y) * (reportData.commandY - robotPos.Y));
     }  
     }
+  }
   return;
 }
 

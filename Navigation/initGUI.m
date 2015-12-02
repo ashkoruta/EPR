@@ -156,7 +156,10 @@ set([f,f_manual,f_automatic,f_title,f_robotPosTable,f_BoardMap,f_Video,...
             set(f_currentSubTask, 'String', currentSubTask);
         end
         
-        [GPS_X, GPS_Y, GPS_Phi, timestamp] = getVals(s1);
+%         [GPS_X, GPS_Y, GPS_Phi, timestamp] = getVals(s1);
+GPS_X = 0.50;
+GPS_Y = 0.15;
+GPS_Phi = 50;
         
         fwrite(serialConnection,num2str(command_X(command_Index)));
         fwrite(serialConnection,',');

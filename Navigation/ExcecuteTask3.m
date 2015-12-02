@@ -25,6 +25,7 @@ end
 %Move to Mt Simmons Collecting Snow Area
 if(achievePosRoof == 0)
     MoveToRoof(newxPos, newyPos, newAngle);
+  
 else
     if(clearRoofLeft == 1)
         %Display on the GUI the current sub task
