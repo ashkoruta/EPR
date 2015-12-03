@@ -272,7 +272,7 @@ end
     function keypressfcn(varargin)
         global command_X command_Y command_Phi
         key = get(gcbf,'CurrentKey');
-        k = .2;
+        k = .1;
         switch key
             case'uparrow'
                 command_X = xPos(end) +k*cos((Phi(end))*pi/180);
@@ -317,7 +317,7 @@ end
                 
             case 'leftarrow'
                 disp('leftarrow')
-                command_Phi = Phi(end) + 45;
+                command_Phi = Phi(end) + 20;
                 fwrite(serialConnection,num2str(command_X));
                 fwrite(serialConnection,',');
                 fwrite(serialConnection,num2str(command_Y));
