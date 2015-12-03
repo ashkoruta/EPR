@@ -127,8 +127,26 @@ set([f,f_manual,f_automatic,f_title,f_robotPosTable,f_BoardMap,f_Video,...
     f_clearRoofLeft,f_clearRoofRight,f_boardPanel,f_textSubTask,f_currentSubTask,...
     f_GPScorrection,f_textDisplay,f_currentDisplay],'Units','normalized');
 
-
-
+% To Test
+%-------------------------------------------------------------
+Start = input('Robot Initial Position Changed ? Y/N', 's');
+if (Start == 'Y' || Start == 'y')
+    RobotInitX = input('Robot Start X position :');
+    RobotInitY = input('Robot Start Y position :');
+    RobotInitPhi = input('Robot Start Phi position :');
+    
+    fwrite(serialConnection,'I');
+    fwrite(serialConnection,',');
+    fwrite(serialConnection,RobotInitX);
+    fwrite(serialConnection,',');
+    fwrite(serialConnection,RobotInitY);
+    fwrite(serialConnection,',');
+    fwrite(serialConnection,RobotInitPhi);
+    fwrite(serialConnection,'\n');
+    disp('Initial Position Sent');
+    pause(1);
+end
+%-------------------------------------------------------------
 
 
     function f_manual_Callback(source,eventdata)

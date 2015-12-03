@@ -95,7 +95,7 @@ void loop() {
     robotPos.update(measureRobot.dThetaL, measureRobot.dThetaR); //update position
 
     reportData.sendSerialData(robotPos); //report data to matlab via serial communication
-    reportData.receiveSerialData();
+    reportData.receiveSerialData(robotPos);
     if (int s = reportData.ServoCom) {
       if (s == 1)
         servoClose();

@@ -185,7 +185,7 @@ void SerialCommunication::sendSerialData(const RobotPosition & robotPos) {
   return;
 }
 
-void SerialCommunication::receiveSerialData() {
+void SerialCommunication::receiveSerialData(RobotPosition & robotPos) {
     if (Serial.available() > 0) {
       commandString = Serial.readString();
       int i = 0;
@@ -197,13 +197,19 @@ void SerialCommunication::receiveSerialData() {
           ServoCom = 1;
         else if (tempString[0] == 'O')
           ServoCom = 2;
+        else if (tempString[0] == 'I')
+          ServoCom = 3;
         else
           ServoCom = 0; // not a servo command
         commandString = commandString.substring(indexPointer+1);
         command[i] = tempString.toFloat();
         ++i;
       }
-
+     if(ServoCom ==3){
+        robotPos.X = command[1];
+        robotPos.Y = command[2];
+        robotPos.Phi = command[3];
+       }
       if(ServoCom==0){
       commandX = command[0];
       commandY = command[1];

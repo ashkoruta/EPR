@@ -257,7 +257,7 @@ class SerialCommunication {
     Output: None
     Usage; Call this function to send serial data in each timed loop
     */   
-    void receiveSerialData();
+    void receiveSerialData(RobotPosition & robotPos);
     /*Function Name: updateStatus(boolean finished);
     Effect: change the private member variable boolean finished
     Modifies: private member variable boolean finished
