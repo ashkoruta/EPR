@@ -7,9 +7,9 @@ global readyToDumpSnow command_X command_Y...
 if(newCommand == 1)
     %Call a function that outputs the commands to Go to
     %Snow truck through a way point
-    command_X = [1.3];
+    command_X = [1.2];
     command_Y = [0.15];
-    command_Phi = [20];
+    command_Phi = [45];
     
     command_Index = 0; %Start looking from the beginning of the Commands
     newCommand = 0; %Command set won't go back in that loop

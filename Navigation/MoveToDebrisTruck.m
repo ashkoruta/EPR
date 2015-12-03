@@ -11,9 +11,9 @@ if(newCommand == 1)
     if(DetectDebris())
         %Call a function that outputs the commands to Go to
         %Snow truck through a way point
-        command_X = [1.3];
+        command_X = [1.2];
         command_Y = [0.15];
-        command_Phi = [-20];
+        command_Phi = [-45];
         wayBack = 0; %variable to choose to go to debris truck or Mt Simmons
     else
         %Call a function that outputs the commands to Go to

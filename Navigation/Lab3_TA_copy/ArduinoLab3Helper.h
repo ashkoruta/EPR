@@ -302,6 +302,8 @@ class PathPlanner {
     float pathlast;
     float phiDesired;
     float pathDesired;
+    float commandXlast;
+    float commandYlast;
     /*Function Name: initialize();
     Effect: Initialize all public member variables of the class to 0
     Modifies: All member variables

@@ -18,9 +18,9 @@ if(newCommand == 1)
     %     command_X = [1.3];
     %     command_Y = [0.15];
     %     command_Phi = [0];
-    command_X = [1.2];
-    command_Y = [0.15];
-    command_Phi = [0];
+    command_X = [1.0,1.25];
+    command_Y = [0.20,0.20];
+    command_Phi = [400,0];
     
     command_Index = 0; %Start looking from the beginning of the Commands
     newCommand = 0; %Command set won't go back in that loop

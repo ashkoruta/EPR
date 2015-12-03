@@ -245,6 +245,8 @@ void PathPlanner::initialize() {
   pathlast = 0;
   phiDesired = 0;
   pathDesired = 0;
+  commandXlast = 0;
+  commandYlast = 0;
   return;
 }
 
@@ -333,9 +335,15 @@ void PathPlanner::turnToGo(RobotPosition & robotPos, SerialCommunication & repor
     desiredMVR = 0;
     desiredMVL = 0;
     if (!reportData.finished){
+      if(abs(commandXlast-reportData.commanX)<0.02 && abs(commandYlast-reportData.commanY)<0.02){
+      currentTask = 3;
+      }
+      else{
       currentTask = 1;
+      }
     }
   }
+  
   if (currentTask == 1) { //turn towards next point 
     if (lastPhiError > 0 || (lastPhiError <0 && 2*PI-abs(lastPhiError)<PI)){ //turn counter clock wise
       if (currentPhiError >= 0){
@@ -397,9 +405,9 @@ void PathPlanner::turnToGo(RobotPosition & robotPos, SerialCommunication & repor
     }
     else {
     if (lastCommandPhiError > 0 || (lastCommandPhiError <0 && 2*PI-abs(lastCommandPhiError)<PI)){ //turn counter clock wise
-      if (currentCommandPhiError >= 0){
-        desiredMVR = 0.4;
-        desiredMVL = -0.4;
+      if (currentCommandPhiError >= 0.02){
+        desiredMVR = 0.3;
+        desiredMVL = -0.3;
       } else {
         desiredMVR = 0;
         desiredMVL = 0;
@@ -409,9 +417,9 @@ void PathPlanner::turnToGo(RobotPosition & robotPos, SerialCommunication & repor
       }
     }
    if (lastCommandPhiError < 0 || (lastCommandPhiError > 0 && 2*PI-abs(lastCommandPhiError)<PI)){ //turn clock wise
-      if (currentCommandPhiError <= 0){
-        desiredMVR = -0.4;
-        desiredMVL = 0.4;
+      if (currentCommandPhiError <= -0.02){
+        desiredMVR = -0.3;
+        desiredMVL = 0.3;
       } else {
         desiredMVR = 0;
         desiredMVL = 0;
@@ -428,54 +436,6 @@ void PathPlanner::turnToGo(RobotPosition & robotPos, SerialCommunication & repor
     }  
     }
   }
-  return;
-}
-
-void PathPlanner::turnAndGo(const RobotPosition & robotPos, const SerialCommunication & reportData) {
-  //take next point (X,Y) positions given by MatLab, calculate phi to turn towards, then go forward and turn at the same time 
-  phiGoal = tan((reportData.commandY - ylast) / (reportData.commandX - xlast));
-  
-  if (philast > phiGoal){ //turn clock wise 
-    forwardVel = .2;
-    phiDesired = tan((reportData.commandY - robotPos.Y) / (reportData.commandX - robotPos.X));
-    
-    if (robotPos.Phi > phiDesired) { //if we are not pointing directly at the way point, keep going and turning
-      K = -4;
-      computeDesiredV();
-      pathDesired = sqrt((reportData.commandX - robotPos.X) * (reportData.commandX - robotPos.X) + (reportData.commandY - robotPos.Y) * (reportData.commandY - robotPos.Y))+robotPos.pathDistance;
-    } else if (robotPos.pathDistance < pathDesired) { //if we are pointing toward the way point but not there yet, keep going straight 
-      K=0;
-      computeDesiredV();
-    } else { //if we are there, stop and move on to the next task
-      desiredMVR = 0;
-      desiredMVL = 0;
-      xlast = robotPos.X;
-      ylast = robotPos.Y;
-      philast = robotPos.Phi;
-      pathlast = robotPos.pathDistance;
-      Serial.println("NEXT POINT");
-    }  
-  } else { //turn counter clock wise
-      forwardVel = .2; 
-      phiDesired = tan((reportData.commandY - robotPos.Y) / (reportData.commandX - robotPos.X));
-    if (robotPos.Phi < phiDesired) { //if we are not pointing directly at the way point, keep going and turning
-      K = 4;
-      computeDesiredV();
-      pathDesired = sqrt((reportData.commandX - robotPos.X) * (reportData.commandX - robotPos.X) + (reportData.commandY - robotPos.Y) * (reportData.commandY - robotPos.Y))+robotPos.pathDistance;
-    } else if (robotPos.pathDistance < pathDesired) { //if we are pointing toward the way point but not there yet, keep going straight 
-      K=0;
-      computeDesiredV();      
-    } else { //if we are there, stop and move on to the next task
-      desiredMVR = 0;
-      desiredMVL = 0;
-      xlast = robotPos.X;
-      ylast = robotPos.Y;
-      philast = robotPos.Phi;
-      pathlast = robotPos.pathDistance;
-      Serial.println("NEXT POINT");
-    } 
-  }
-  
   return;
 }
 
